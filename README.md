@@ -80,3 +80,7 @@ This plugin is released under the [GPLv3 License](https://www.gnu.org/licenses/g
 ## Contact
 
 For questions or suggestions, contact the project administrator or open an issue on GitHub.
+
+---
+
+This plugin adheres to Moodle's plugin development guidelines and best practices. Ensure that your Moodle installation is properly backed up before installing or updating any plugin.
