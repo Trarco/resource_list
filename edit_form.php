@@ -7,20 +7,22 @@ class block_resource_list_edit_form extends block_edit_form
 {
     protected function specific_definition($mform)
     {
-        // Aggiungi il campo per il titolo del blocco.
+        global $DB;
+
+        // Add the block title field.
         $mform->addElement('text', 'config_title', get_string('title', 'block_resource_list'));
         $mform->setDefault('config_title', get_string('pluginname', 'block_resource_list'));
         $mform->setType('config_title', PARAM_TEXT);
 
-        // Tab "Descrizione".
+        // Tab "Description".
         $mform->addElement('header', 'descriptionsettings', get_string('descriptionsettings', 'block_resource_list'));
 
-        // Controllo contesto per il campo descrizione.
+        // Ensure block context is set for the editor.
         if (!isset($this->block->context)) {
             $this->block->context = context_system::instance();
         }
 
-        // Campo per la descrizione.
+        // Add the description editor.
         $mform->addElement('editor', 'config_description', get_string('description', 'block_resource_list'), null, array(
             'maxfiles' => EDITOR_UNLIMITED_FILES,
             'noclean' => true,
@@ -28,18 +30,23 @@ class block_resource_list_edit_form extends block_edit_form
         ));
         $mform->setType('config_description', PARAM_RAW);
 
-        // Aggiungi un'opzione per selezionare il tipo di attività.
-        $mform->addElement('select', 'config_activitytype', get_string('filterbyactivity', 'block_resource_list'), array(
-            'all' => get_string('allactivities', 'block_resource_list'),
-            'assign' => get_string('assignments', 'block_resource_list'),
-            'quiz' => get_string('quizzes', 'block_resource_list'),
-            'forum' => get_string('forums', 'block_resource_list'),
-            'resource' => get_string('resources', 'block_resource_list'),
-            'page' => get_string('pages', 'block_resource_list'),
-            'scorm' => get_string('scorm', 'block_resource_list'),
-        ), array('multiple' => true)); // Usa multiple=true come opzione
+        // Add an option to select activity types dynamically from the database.
+        $sql = "SELECT DISTINCT name 
+                FROM {modules} 
+                WHERE visible = 1
+                ORDER BY name ASC";
+        $modules = $DB->get_records_sql($sql);
 
-        // Imposta il valore di default (ad esempio, 'all' è selezionato di default).
+        // Create a dynamic list of activity types.
+        $activitytypes = array('all' => get_string('allactivities', 'block_resource_list'));
+        foreach ($modules as $module) {
+            $activitytypes[$module->name] = get_string($module->name, 'block_resource_list');
+        }
+
+        // Add the activity type select field with multiple selection enabled.
+        $mform->addElement('select', 'config_activitytype', get_string('filterbyactivity', 'block_resource_list'), $activitytypes, array('multiple' => true));
+
+        // Set default value (e.g., 'all' is selected by default).
         $mform->setDefault('config_activitytype', array('all'));
     }
 }

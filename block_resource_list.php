@@ -54,46 +54,58 @@ class block_resource_list extends block_list
     /**
      * Returns the HTML for the activity type filter dropdown.
      *
-     * @param string $selected The selected activity type.
+     * @param array $selected The selected activity types (array of keys).
      * @return string HTML of the select element.
      */
     private function get_activity_type_filter($selected)
     {
-        global $OUTPUT, $PAGE;
+        global $OUTPUT, $PAGE, $DB;
 
-        // Define available activity types
-        $activitytypes = array(
-            'all' => get_string('allactivities', 'block_resource_list'),
-            'assign' => get_string('assignments', 'block_resource_list'),
-            'quiz' => get_string('quizzes', 'block_resource_list'),
-            'forum' => get_string('forums', 'block_resource_list'),
-            'resource' => get_string('resources', 'block_resource_list'),
-            'page' => get_string('pages', 'block_resource_list'),
-            'scorm' => get_string('scorm', 'block_resource_list'),
-        );
+        // Retrieve cached modules if available.
+        $cache = cache::make('block_resource_list', 'modules');
+        $modules = $cache->get('all');
 
-        $options = '';
-        foreach ($activitytypes as $key => $label) {
-            // Verifica se l'attività è selezionata.
-            $selected_attr = (in_array($key, $selected)) ? 'selected="selected"' : '';
-            $options .= '<option value="' . $key . '" ' . $selected_attr . '>' . $label . '</option>';
+        if (!$modules) {
+            $sql = "SELECT DISTINCT name 
+                FROM {modules} 
+                WHERE visible = 1
+                ORDER BY name ASC";
+            $modules = $DB->get_records_sql($sql);
+            $cache->set('all', $modules);
         }
 
-        // Include the course ID in the form action
+        // Initialize the array for activity types.
+        $activitytypes = array(
+            'all' => get_string('allactivities', 'block_resource_list')
+        );
+
+        foreach ($modules as $module) {
+            $activitytypes[$module->name] = get_string($module->name, 'block_resource_list');
+        }
+
+        // Generate the filter form.
+        $options = '';
+        foreach ($activitytypes as $key => $label) {
+            $selected_attr = (is_array($selected) && in_array($key, $selected)) ? 'selected="selected"' : '';
+            $options .= '<option value="' . s($key) . '" ' . $selected_attr . '>' . s($label) . '</option>';
+        }
+
         $courseid = $PAGE->course->id;
 
-        $filter_html = '
+        return '
         <form method="get" action="">
-            <input type="hidden" name="id" value="' . $courseid . '">
+            <input type="hidden" name="id" value="' . s($courseid) . '">
             <label for="activitytype">' . get_string('filterbyactivity', 'block_resource_list') . '</label>
             <select name="activitytype[]" id="activitytype" multiple="multiple" onchange="this.form.submit()">
                 ' . $options . '
             </select>
-        </form>
-    ';
-
-        return $filter_html;
+            <noscript>
+                <button type="submit">' . get_string('applyfilter', 'block_resource_list') . '</button>
+            </noscript>
+        </form>';
     }
+
+
 
 
     public function get_aria_role()
