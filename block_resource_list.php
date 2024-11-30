@@ -67,7 +67,15 @@ class block_resource_list extends block_list
                 $cm = $modinfo->cms[$cmid];
                 // Usa il metodo pix_icon del renderer per generare l'icona
                 $icon = $renderer->pix_icon('icon', $cm->modplural, 'mod_' . $cm->modname, ['class' => 'activityicon']);
-                $link = html_writer::link($cm->url, $icon . ' ' . $cm->name, ['class' => 'activityinstance']);
+
+                // Contenitore con background color dinamico
+                $iconcontainer = html_writer::tag(
+                    'div',
+                    $icon,
+                    ['class' => 'activityiconcontainer align-self-start position-relative modtype_' . $cm->modname]
+                );
+
+                $link = html_writer::link($cm->url, $iconcontainer . ' ' . $cm->name, ['class' => 'activityinstance']);
                 $sectioncontent .= html_writer::tag('li', $link, ['class' => 'activity ' . $cm->modname]);
             }
 
