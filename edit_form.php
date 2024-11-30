@@ -48,5 +48,9 @@ class block_resource_list_edit_form extends block_edit_form
 
         // Set default value (e.g., 'all' is selected by default).
         $mform->setDefault('config_activitytype', array('all'));
+
+        // Add a checkbox to choose the type of render.
+        $mform->addElement('advcheckbox', 'config_groupsections', get_string('groupsections', 'block_resource_list'));
+        $mform->setDefault('config_groupsections', 1); // Default: checked.
     }
 }

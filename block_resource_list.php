@@ -11,7 +11,7 @@ class block_resource_list extends block_list
 
     function get_content()
     {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $PAGE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -19,124 +19,87 @@ class block_resource_list extends block_list
 
         $this->content = new stdClass;
         $this->content->items = array();
-        $this->content->icons = array();
 
+        // Imposta il titolo del blocco
         $this->title = !empty($this->config->title) ? $this->config->title : get_string('pluginname', 'block_resource_list');
 
-        if (!empty($this->config->description)) {
-            $descriptiontext = is_array($this->config->description) ? $this->config->description['text'] : $this->config->description;
-            $this->content->items[] = $OUTPUT->box(format_text($descriptiontext, FORMAT_HTML), 'description-box');
-        }
+        $course = $this->page->course; // Ottieni il corso corrente
+        $modinfo = get_fast_modinfo($course); // Ottieni informazioni sul corso
+        $renderer = $PAGE->get_renderer('block_resource_list'); // Usa il renderer personalizzato
 
-        $course = $this->page->course;
-        $modinfo = get_fast_modinfo($course);
-
+        // Filtraggio delle attività configurate
         $activitytypes = isset($this->config->activitytype) && is_array($this->config->activitytype)
             ? $this->config->activitytype
-            : array('all');
+            : array('all'); // Di default, tutte le attività
 
-        foreach ($modinfo->cms as $cm) {
-            if (!$cm->uservisible || !$cm->has_view() || !$cm->url) {
-                continue;
+        // Funzione per filtrare le attività
+        $filter_activities = function ($cms) use ($modinfo, $activitytypes) {
+            return array_filter($cms, function ($cmid) use ($modinfo, $activitytypes) {
+                $cm = $modinfo->cms[$cmid];
+                return $cm->uservisible
+                    && $cm->has_view()
+                    && $cm->url
+                    && (in_array('all', $activitytypes) || in_array($cm->modname, $activitytypes));
+            });
+        };
+
+        if (!empty($this->config->groupsections)) {
+            // Raggruppa le attività per sezione
+            $sections = $modinfo->get_section_info_all();
+
+            foreach ($sections as $section) {
+                $filtered_cms = $filter_activities($modinfo->sections[$section->section] ?? []);
+                if (empty($filtered_cms)) {
+                    continue; // Salta sezioni senza moduli filtrati
+                }
+
+                $content = $renderer->render_section($course, $section, $modinfo, $filtered_cms);
+                if (!empty($content)) {
+                    $this->content->items[] = $content;
+                }
+            }
+        } else {
+            // Mostra tutte le attività in un elenco semplice
+            $sectioncontent = '';
+            $filtered_cms = $filter_activities(array_keys($modinfo->cms));
+
+            foreach ($filtered_cms as $cmid) {
+                $cm = $modinfo->cms[$cmid];
+                // Usa il metodo pix_icon del renderer per generare l'icona
+                $icon = $renderer->pix_icon('icon', $cm->modplural, 'mod_' . $cm->modname, ['class' => 'activityicon']);
+                $link = html_writer::link($cm->url, $icon . ' ' . $cm->name, ['class' => 'activityinstance']);
+                $sectioncontent .= html_writer::tag('li', $link, ['class' => 'activity ' . $cm->modname]);
             }
 
-            if (!in_array('all', $activitytypes) && !in_array($cm->modname, $activitytypes)) {
-                continue;
+            if (!empty($sectioncontent)) {
+                $this->content->items[] = html_writer::tag('ul', $sectioncontent, ['class' => 'simple-activity-list']);
             }
-
-            $icon = $OUTPUT->pix_icon('icon', $cm->modplural, 'mod_' . $cm->modname, ['class' => 'activity-icon']);
-            $this->content->items[] = '<a href="' . $cm->url . '">' . $icon . ' ' . $cm->name . '</a>';
         }
 
         return $this->content;
     }
 
-    /**
-     * Returns the HTML for the activity type filter dropdown.
-     *
-     * @param array $selected The selected activity types (array of keys).
-     * @return string HTML of the select element.
-     */
-    private function get_activity_type_filter($selected)
-    {
-        global $OUTPUT, $PAGE, $DB;
-
-        // Retrieve cached modules if available.
-        $cache = cache::make('block_resource_list', 'modules');
-        $modules = $cache->get('all');
-
-        if (!$modules) {
-            $sql = "SELECT DISTINCT name 
-                FROM {modules} 
-                WHERE visible = 1
-                ORDER BY name ASC";
-            $modules = $DB->get_records_sql($sql);
-            $cache->set('all', $modules);
-        }
-
-        // Initialize the array for activity types.
-        $activitytypes = array(
-            'all' => get_string('allactivities', 'block_resource_list')
-        );
-
-        foreach ($modules as $module) {
-            $activitytypes[$module->name] = get_string($module->name, 'block_resource_list');
-        }
-
-        // Generate the filter form.
-        $options = '';
-        foreach ($activitytypes as $key => $label) {
-            $selected_attr = (is_array($selected) && in_array($key, $selected)) ? 'selected="selected"' : '';
-            $options .= '<option value="' . s($key) . '" ' . $selected_attr . '>' . s($label) . '</option>';
-        }
-
-        $courseid = $PAGE->course->id;
-
-        return '
-        <form method="get" action="">
-            <input type="hidden" name="id" value="' . s($courseid) . '">
-            <label for="activitytype">' . get_string('filterbyactivity', 'block_resource_list') . '</label>
-            <select name="activitytype[]" id="activitytype" multiple="multiple" onchange="this.form.submit()">
-                ' . $options . '
-            </select>
-            <noscript>
-                <button type="submit">' . get_string('applyfilter', 'block_resource_list') . '</button>
-            </noscript>
-        </form>';
-    }
-
-
-
-
-    public function get_aria_role()
-    {
-        return 'navigation';
-    }
-
     function applicable_formats()
     {
         return array(
-            'all' => true,
-            'mod' => false,
+            'course-view' => true, // Mostra solo nelle pagine corso
+            'site' => false,
             'my' => false,
-            'admin' => false,
-            'tag' => false
         );
     }
 
     public function instance_config_save($data, $nolongerused = false)
     {
-        // Se 'activitytype' non è un array, convertirlo in uno.
+        // Converte il tipo di attività in array se necessario
         if (isset($data->activitytype) && !is_array($data->activitytype)) {
-            $data->activitytype = array($data->activitytype); // Convertire in array se è una stringa
+            $data->activitytype = array($data->activitytype);
         }
 
         parent::instance_config_save($data, $nolongerused);
     }
 
-
     public function instance_allow_multiple()
     {
-        return true;
+        return true; // Permetti più blocchi
     }
 }
