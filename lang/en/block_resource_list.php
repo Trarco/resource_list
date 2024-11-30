@@ -27,3 +27,9 @@ $string['survey'] = 'Surveys';
 $string['url'] = 'URLs';
 $string['wiki'] = 'Wikis';
 $string['workshop'] = 'Workshops';
+$string['h5pactivity'] = 'H5P Activities'; 
+$string['imscp'] = 'IMS Content Packages'; 
+$string['label'] = 'Labels'; 
+
+//Group by sections
+$string['groupsections'] = 'Group activities by sections';
