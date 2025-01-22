@@ -1,0 +1,11 @@
+.block_resource_list .card-title {
+    font-size: 2em;
+    font-weight: 700;
+    color: #363636;
+}
+
+.block_resource_list_description {
+    font-size: 1em;
+    margin-bottom: 15px;
+    color: #525252;
+}

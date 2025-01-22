@@ -20,11 +20,27 @@ class block_resource_list extends block_list
         $this->content = new stdClass;
         $this->content->items = [];
 
-        // Debug della configurazione
-        debugging('Valori activitytype: ' . json_encode($this->config->activitytype));
+        // Costruisci il percorso del file CSS
+        $css_file_path = '/blocks/' . $this->instance->blockname . '/styles/styles.css';
+        $css_full_path = __DIR__ . '/styles/styles.css';
 
-        // Imposta il titolo del blocco
-        $this->title = !empty($this->config->title) ? $this->config->title : get_string('pluginname', 'block_resource_list');
+        // Verifica se il file esiste e carica il CSS
+        if (file_exists($css_full_path)) {
+            $PAGE->requires->css(new moodle_url($css_file_path));
+        }
+
+        // Imposta il titolo configurato nel modulo edit.php
+        if (!empty($this->config->title)) {
+            $this->title = $this->config->title;
+        } else {
+            $this->title = get_string('pluginname', 'block_resource_list');
+        }
+
+        // Aggiungi la descrizione del blocco se è stata configurata
+        if (!empty($this->config->description['text'])) {
+            $description = format_text($this->config->description['text'], $this->config->description['format']);
+            $this->content->items[] = html_writer::tag('div', $description, ['class' => 'block_resource_list_description']);
+        }
 
         $course = $this->page->course;
         $modinfo = get_fast_modinfo($course);
