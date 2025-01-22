@@ -49,8 +49,24 @@ class block_resource_list_edit_form extends block_edit_form
         // Set default value (e.g., 'all' is selected by default).
         $mform->setDefault('config_activitytype', array('all'));
 
-        // Add a checkbox to choose the type of render.
+        // Add a checkbox to choose if the activities are grouped by sections.
         $mform->addElement('advcheckbox', 'config_groupsections', get_string('groupsections', 'block_resource_list'));
         $mform->setDefault('config_groupsections', 1); // Default: checked.
+
+        // Add a checkbox to remove indentation
+        $mform->addElement('advcheckbox', 'config_removeindentation', get_string('removeindentation', 'block_resource_list'));
+        $mform->setDefault('config_removeindentation', 0); // Default: unchecked.
+
+        // Add a checkbox to display only quizzes containing "Quiz di verifica" in their title.
+        $mform->addElement('advcheckbox', 'config_showverificationquiz', get_string('showverificationquiz', 'block_resource_list'));
+        $mform->setDefault('config_showverificationquiz', 0); // Default: unchecked.
+
+        // Add a checkbox to display only quizzes containing "Test di Autovalutazione" in their title.
+        $mform->addElement('advcheckbox', 'config_showselfassessmentquiz', get_string('showselfassessmentquiz', 'block_resource_list'));
+        $mform->setDefault('config_showselfassessmentquiz', 0); // Default: unchecked.
+
+        // Add a checkbox to display only quizzes containing "Esercitazione del caso" in their title.
+        $mform->addElement('advcheckbox', 'config_showcasestudyquiz', get_string('showcasestudyquiz', 'block_resource_list'));
+        $mform->setDefault('config_showcasestudyquiz', 0); // Default: unchecked.
     }
 }

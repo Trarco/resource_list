@@ -27,9 +27,13 @@ $string['survey'] = 'Surveys';
 $string['url'] = 'URLs';
 $string['wiki'] = 'Wikis';
 $string['workshop'] = 'Workshops';
-$string['h5pactivity'] = 'H5P Activities'; 
-$string['imscp'] = 'IMS Content Packages'; 
-$string['label'] = 'Labels'; 
+$string['h5pactivity'] = 'H5P Activities';
+$string['imscp'] = 'IMS Content Packages';
+$string['label'] = 'Labels';
 
-//Group by sections
+//Checkbox
 $string['groupsections'] = 'Group activities by sections';
+$string['showverificationquiz'] = 'Show verification quiz';
+$string['showselfassessmentquiz'] = 'Show self-assessment test';
+$string['showcasestudyquiz'] = 'Show case study exercises';
+$string['removeindentation'] = 'Remove indentation';
