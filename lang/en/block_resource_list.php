@@ -33,7 +33,14 @@ $string['label'] = 'Labels';
 
 //Checkbox
 $string['groupsections'] = 'Group activities by sections';
-$string['showverificationquiz'] = 'Show verification quiz';
-$string['showselfassessmentquiz'] = 'Show self-assessment test';
+
+$string['showverificationquiz'] = 'Show verification quizzes';
+$string['showverificationquiz_help'] = 'If selected, only quizzes containing "Quiz di verifica" in their title will be displayed.';
+
+$string['showselfassessmentquiz'] = 'Show self-assessment tests';
+$string['showselfassessmentquiz_help'] = 'If selected, only quizzes containing "Test di autovalutazione" in their title will be displayed.';
+
 $string['showcasestudyquiz'] = 'Show case study exercises';
-$string['removeindentation'] = 'Remove indentation';
+$string['showcasestudyquiz_help'] = 'If selected, only quizzes containing "Esercitazione del caso" in their title will be displayed.';
+
+$string['removeindentation'] = 'Remove indentation from activities';

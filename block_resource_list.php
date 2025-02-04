@@ -85,11 +85,11 @@ class block_resource_list extends block_list
                 if ($cm->modname === 'quiz') {
                     $matched_filters = [];
 
-                    if ($show_verification_quiz && strpos($activity_name, 'quiz di verifica') !== false) {
-                        $matched_filters[] = 'quiz di verifica';
+                    if ($show_verification_quiz && (strpos($activity_name, 'quiz di verifica') !== false || strpos($activity_name, 'test di verifica') !== false)) {
+                        $matched_filters[] = 'quiz/test di verifica';
                     }
-                    if ($show_self_assessment_quiz && strpos($activity_name, 'test di autovalutazione') !== false) {
-                        $matched_filters[] = 'test di autovalutazione';
+                    if ($show_self_assessment_quiz && (strpos($activity_name, 'test di autovalutazione') !== false || strpos($activity_name, 'quiz di autovalutazione') !== false)) {
+                        $matched_filters[] = 'test/quiz di autovalutazione';
                     }
                     if ($show_case_study_quiz && strpos($activity_name, 'esercitazione del caso') !== false) {
                         $matched_filters[] = 'esercitazione del caso';

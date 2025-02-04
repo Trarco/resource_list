@@ -60,13 +60,16 @@ class block_resource_list_edit_form extends block_edit_form
         // Add a checkbox to display only quizzes containing "Quiz di verifica" in their title.
         $mform->addElement('advcheckbox', 'config_showverificationquiz', get_string('showverificationquiz', 'block_resource_list'));
         $mform->setDefault('config_showverificationquiz', 0); // Default: unchecked.
+        $mform->addHelpButton('config_showverificationquiz', 'showverificationquiz_help', 'block_resource_list');
 
         // Add a checkbox to display only quizzes containing "Test di Autovalutazione" in their title.
         $mform->addElement('advcheckbox', 'config_showselfassessmentquiz', get_string('showselfassessmentquiz', 'block_resource_list'));
         $mform->setDefault('config_showselfassessmentquiz', 0); // Default: unchecked.
+        $mform->addHelpButton('config_showselfassessmentquiz', 'showselfassessmentquiz_help', 'block_resource_list');
 
         // Add a checkbox to display only quizzes containing "Esercitazione del caso" in their title.
         $mform->addElement('advcheckbox', 'config_showcasestudyquiz', get_string('showcasestudyquiz', 'block_resource_list'));
         $mform->setDefault('config_showcasestudyquiz', 0); // Default: unchecked.
+        $mform->addHelpButton('config_showcasestudyquiz', 'showcasestudyquiz_help', 'block_resource_list');
     }
 }

@@ -33,7 +33,14 @@ $string['label'] = 'Etichette';
 
 // Checkbox
 $string['groupsections'] = 'Raggruppa le attività per sezioni';
+
 $string['showverificationquiz'] = 'Mostra quiz di verifica';
+$string['showverificationquiz_help'] = 'Se selezionato, verranno mostrati solo i quiz che contengono "Quiz di verifica" nel titolo.';
+
 $string['showselfassessmentquiz'] = 'Mostra test di autovalutazione';
+$string['showselfassessmentquiz_help'] = 'Se selezionato, verranno mostrati solo i quiz che contengono "Test di autovalutazione" nel titolo.';
+
 $string['showcasestudyquiz'] = 'Mostra esercitazioni del caso';
+$string['showcasestudyquiz_help'] = 'Se selezionato, verranno mostrati solo i quiz che contengono "Esercitazione del caso" nel titolo.';
+
 $string['removeindentation'] = 'Rimuovi indentazione dalle attività';
