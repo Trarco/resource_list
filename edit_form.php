@@ -68,9 +68,6 @@ class block_resource_list_edit_form extends block_edit_form
         $repeatarray = [];
         $repeatarray[] = $mform->createElement('text', 'config_activitytitlefilters', get_string('activitytitlefilter', 'block_resource_list'));
         $repeatarray[] = $mform->createElement('static', 'activitytitlefilters_info', '', get_string('activitytitlefilterinfo', 'block_resource_list'));
-        // Aggiungi il pulsante di aiuto per il campo ripetibile
-        $mform->addHelpButton('config_activitytitlefilters[0]', 'activitytitlefilters_help', 'block_resource_list');
-
 
         // Impostazione tipo per il campo ripetibile
         $mform->setType('config_activitytitlefilters', PARAM_TEXT);

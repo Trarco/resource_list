@@ -1,5 +1,25 @@
 # Changelog
 
+## \[2.0.0] - 2025-07-11
+
+### Added
+
+* **Custom Text Filters for Activity Titles**: Introduced a repeatable field allowing users to define multiple keyword filters. Activities are shown if their title contains *any* of the specified keywords (OR logic).
+* **Help Message for Custom Filters**: Added inline help text (tooltip) for each filter field, explaining how to use the keyword matching (e.g., to filter activities containing "Simulazione").
+* **Persistent Filter Fields**: Configuration form now properly pre-populates the custom filters when editing an existing block instance.
+* **Mustache Template Integration**: Replaced raw HTML output with a clean Mustache template (activity_list.mustache) to render sections and activities, improving maintainability and separation of concerns.
+
+
+### Changed
+
+* **Filter Logic**: Extended the filtering system to apply to **all activity types**, not just quizzes.
+* **Activity Name Comparison**: Normalized title filtering to use lowercase comparison with `strpos()` for case-insensitive matching.
+
+### Fixed
+
+* **Form Rendering**: Fixed an issue where the repeatable elements for custom filters were not displaying previously saved values when editing the block.
+* **Config Reference Error**: Corrected use of `$this->block->config` instead of `$this->config` inside the `edit_form.php`, preventing a fatal error during form rendering.
+
 ## [1.0.0] - 2025-02-04 
 
 ### Added
