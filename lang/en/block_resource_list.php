@@ -7,40 +7,13 @@ $string['generalsettings'] = 'General settings';
 $string['descriptionsettings'] = 'Description settings';
 $string['description'] = 'Description';
 
-// Activity
-$string['assign'] = 'Assignments';
-$string['quiz'] = 'Quizzes';
-$string['forum'] = 'Forums';
-$string['resource'] = 'Resources';
-$string['page'] = 'Pages';
-$string['scorm'] = 'SCORM packages';
-$string['book'] = 'Books';
-$string['chat'] = 'Chats';
-$string['choice'] = 'Choices';
-$string['data'] = 'Databases';
-$string['feedback'] = 'Feedback';
-$string['folder'] = 'Folders';
-$string['glossary'] = 'Glossaries';
-$string['lesson'] = 'Lessons';
-$string['lti'] = 'External tools';
-$string['survey'] = 'Surveys';
-$string['url'] = 'URLs';
-$string['wiki'] = 'Wikis';
-$string['workshop'] = 'Workshops';
-$string['h5pactivity'] = 'H5P Activities';
-$string['imscp'] = 'IMS Content Packages';
-$string['label'] = 'Labels';
-
-//Checkbox
 $string['groupsections'] = 'Group activities by sections';
 
-$string['showverificationquiz'] = 'Show verification quizzes';
-$string['showverificationquiz_help'] = 'If selected, only quizzes containing "Quiz di verifica" in their title will be displayed.';
-
-$string['showselfassessmentquiz'] = 'Show self-assessment tests';
-$string['showselfassessmentquiz_help'] = 'If selected, only quizzes containing "Test di autovalutazione" in their title will be displayed.';
-
-$string['showcasestudyquiz'] = 'Show case study exercises';
-$string['showcasestudyquiz_help'] = 'If selected, only quizzes containing "Esercitazione del caso" in their title will be displayed.';
-
 $string['removeindentation'] = 'Remove indentation from activities';
+
+$string['activitytitlefilterssection'] = 'Custom activity title filters';
+$string['activitytitlefilter'] = 'Filter by keyword';
+$string['activitytitlefilterinfo'] = 'Activities whose title contains this keyword will be displayed.';
+$string['activitytitlefilters_help'] = 'Enter one keyword to display only the activities whose title contains its. For example, to show all activities containing "Simulation", write "Simulation". You can add multiple filters by clicking "Add another filter". If you leave the field empty, all activities will be displayed.';
+
+$string['addmorefilters'] = 'Add another filter';

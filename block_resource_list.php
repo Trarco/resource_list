@@ -64,47 +64,62 @@ class block_resource_list extends block_list
 
         foreach ($sections as $sectionnum => $section) {
             $cms = $modinfo->sections[$sectionnum] ?? [];
-            $cms = array_filter($cms, function ($cmid) use ($modinfo, $selected_activity_types) {
+            $activity_title_filters = [];
+
+            if (!empty($this->config->activitytitlefilters) && is_array($this->config->activitytitlefilters)) {
+                $activity_title_filters = array_map('strtolower', array_filter(array_map('trim', $this->config->activitytitlefilters)));
+            }
+
+
+            $cms = array_filter($cms, function ($cmid) use ($modinfo, $selected_activity_types, $activity_title_filters) {
                 $cm = $modinfo->cms[$cmid];
                 $is_selected_type = in_array($cm->modname, $selected_activity_types) || in_array('all', $selected_activity_types);
 
-                // Recupera la configurazione dei filtri
+                // Recupera la configurazione dei filtri checkbox
                 $show_verification_quiz = !empty($this->config->showverificationquiz);
                 $show_self_assessment_quiz = !empty($this->config->showselfassessmentquiz);
                 $show_case_study_quiz = !empty($this->config->showcasestudyquiz);
 
-                // Se nessun filtro specifico è selezionato, mostra tutto
-                if (!$show_verification_quiz && !$show_self_assessment_quiz && !$show_case_study_quiz) {
-                    return $cm->uservisible && $cm->has_view() && $cm->url && $is_selected_type;
-                }
-
-                // Converte il nome in minuscolo per il confronto
                 $activity_name = strtolower($cm->get_formatted_name());
 
-                // Controlla se l'attività è un quiz e applica i filtri selezionati
-                if ($cm->modname === 'quiz') {
-                    $matched_filters = [];
-
-                    if ($show_verification_quiz && (strpos($activity_name, 'quiz di verifica') !== false || strpos($activity_name, 'test di verifica') !== false)) {
-                        $matched_filters[] = 'quiz/test di verifica';
-                    }
-                    if ($show_self_assessment_quiz && (strpos($activity_name, 'test di autovalutazione') !== false || strpos($activity_name, 'quiz di autovalutazione') !== false)) {
-                        $matched_filters[] = 'test/quiz di autovalutazione';
-                    }
-                    if ($show_case_study_quiz && strpos($activity_name, 'esercitazione del caso') !== false) {
-                        $matched_filters[] = 'esercitazione del caso';
-                    }
-
-                    // Se l'attività soddisfa almeno uno dei filtri selezionati, mostrarla
-                    if (!empty($matched_filters)) {
-                        return $cm->uservisible && $cm->has_view() && $cm->url;
-                    }
-
-                    return false; // Nasconde se nessun filtro corrisponde
+                // Filtro per attività visibili, con vista e URL valido
+                if (!$cm->uservisible || !$cm->has_view() || !$cm->url || !$is_selected_type) {
+                    return false;
                 }
 
-                return $cm->uservisible && $cm->has_view() && $cm->url && $is_selected_type;
+                // Se non ci sono filtri attivi (né testuali né checkbox), mostra tutto
+                if (
+                    !$show_verification_quiz &&
+                    !$show_self_assessment_quiz &&
+                    !$show_case_study_quiz &&
+                    empty($activity_title_filters)
+                ) {
+                    return true;
+                }
+
+                // Filtro checkbox specifici per quiz
+                if ($cm->modname === 'quiz') {
+                    if (
+                        ($show_verification_quiz && (strpos($activity_name, 'quiz di verifica') !== false || strpos($activity_name, 'test di verifica') !== false)) ||
+                        ($show_self_assessment_quiz && (strpos($activity_name, 'test di autovalutazione') !== false || strpos($activity_name, 'quiz di autovalutazione') !== false)) ||
+                        ($show_case_study_quiz && strpos($activity_name, 'esercitazione del caso') !== false)
+                    ) {
+                        return true;
+                    }
+                }
+
+                // Filtro generico per qualunque attività
+                if (!empty($activity_title_filters)) {
+                    foreach ($activity_title_filters as $keyword) {
+                        if (strpos($activity_name, $keyword) !== false) {
+                            return true;
+                        }
+                    }
+                }
+
+                return false; // Non passa nessun filtro
             });
+
 
             if (empty($cms)) {
                 continue; // Salta sezioni vuote
@@ -267,8 +282,12 @@ class block_resource_list extends block_list
 
     public function instance_config_save($data, $nolongerused = false)
     {
-        if (isset($data->activitytype) && !is_array($data->activitytype)) {
-            $data->activitytype = explode(',', $data->activitytype);
+        if (isset($data->activitytitlefilters)) {
+            $filters = $data->activitytitlefilters;
+            if (!is_array($filters)) {
+                $filters = [$filters];
+            }
+            $data->activitytitlefilters = array_values(array_filter(array_map('trim', $filters)));
         }
 
         parent::instance_config_save($data, $nolongerused);
