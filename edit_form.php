@@ -57,9 +57,16 @@ class block_resource_list_edit_form extends block_edit_form
         $mform->setDefault('config_removeindentation', 0); // Default: unchecked.
 
         // Recupera i filtri salvati dalla configurazione del blocco
-        $filters = isset($this->block->config->activitytitlefilters) && is_array($this->block->config->activitytitlefilters)
-            ? $this->block->config->activitytitlefilters
-            : [''];
+        $filters = [];
+        if (isset($this->block->config->activitytitlefilters) && is_array($this->block->config->activitytitlefilters)) {
+            // Filtra stringhe non vuote e rimuovi spazi
+            $filters = array_filter(array_map('trim', $this->block->config->activitytitlefilters));
+        }
+
+        // Se non c'è nessun filtro valido, mostra almeno un campo
+        if (empty($filters)) {
+            $filters = [''];
+        }
 
         // Numero iniziale di filtri
         $repeats = count($filters);
@@ -81,7 +88,7 @@ class block_resource_list_edit_form extends block_edit_form
             'activitytitlefilters_add_fields',
             1,
             get_string('addmorefilters', 'block_resource_list'),
-            true  // Questo permette di pre-popolare i dati
+            true
         );
 
         // Inizializza i valori salvati (deve avvenire dopo `repeat_elements`)
@@ -89,5 +96,8 @@ class block_resource_list_edit_form extends block_edit_form
             $mform->setDefault("config_activitytitlefilters[$i]", $filter);
             $mform->addHelpButton("config_activitytitlefilters[$i]", 'activitytitlefilters_help', 'block_resource_list');
         }
+
+        $mform->addElement('advcheckbox', 'config_excludefiltermatches', get_string('excludefiltermatches', 'block_resource_list'));
+        $mform->addHelpButton('config_excludefiltermatches', 'excludefiltermatches', 'block_resource_list');
     }
 }

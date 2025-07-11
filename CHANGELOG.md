@@ -5,10 +5,10 @@
 ### Added
 
 * **Custom Text Filters for Activity Titles**: Introduced a repeatable field allowing users to define multiple keyword filters. Activities are shown if their title contains *any* of the specified keywords (OR logic).
+* **Exclude Filter Matches Option**: Added a checkbox that allows users to invert the logic of the title filters — displaying all activities *except* those that match the keywords.
 * **Help Message for Custom Filters**: Added inline help text (tooltip) for each filter field, explaining how to use the keyword matching (e.g., to filter activities containing "Simulazione").
 * **Persistent Filter Fields**: Configuration form now properly pre-populates the custom filters when editing an existing block instance.
-* **Mustache Template Integration**: Replaced raw HTML output with a clean Mustache template (activity_list.mustache) to render sections and activities, improving maintainability and separation of concerns.
-
+* **Mustache Template Integration**: Replaced raw HTML output with a clean Mustache template (`activity_list.mustache`) to render sections and activities, improving maintainability and separation of concerns.
 
 ### Changed
 

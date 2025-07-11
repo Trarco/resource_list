@@ -61,7 +61,7 @@ class block_resource_list extends block_list
             }
 
             // Filtra le attività
-            $filtered_cms = array_filter($cms_ids, function ($cmid) use ($modinfo, $selected_activity_types, $activity_title_filters, $show_verification_quiz, $show_self_assessment_quiz, $show_case_study_quiz) {
+            $filtered_cms = array_filter($cms_ids, function ($cmid) use ($modinfo, $selected_activity_types, $activity_title_filters) {
                 $cm = $modinfo->cms[$cmid];
                 $is_selected_type = in_array($cm->modname, $selected_activity_types) || in_array('all', $selected_activity_types);
                 $activity_name = strtolower($cm->get_formatted_name());
@@ -70,18 +70,29 @@ class block_resource_list extends block_list
                     return false;
                 }
 
+                $exclude_matches = !empty($this->config->excludefiltermatches);
+
+                // Se non ci sono filtri, mostra tutto
                 if (empty($activity_title_filters)) {
                     return true;
                 }
 
                 foreach ($activity_title_filters as $keyword) {
-                    if (strpos($activity_name, $keyword) !== false) {
+                    $found = strpos($activity_name, $keyword) !== false;
+
+                    // Se devo escludere, ritorno false se trovo una corrispondenza
+                    if ($exclude_matches && $found) {
+                        return false;
+                    }
+
+                    // Se NON devo escludere, ritorno true alla prima corrispondenza
+                    if (!$exclude_matches && $found) {
                         return true;
                     }
                 }
-
-                return false;
+                return $exclude_matches;
             });
+
 
             if (empty($filtered_cms)) {
                 continue;
