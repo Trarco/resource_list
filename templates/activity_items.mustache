@@ -1,0 +1,34 @@
+{{#sections}}
+<ul class="rui-section section img-text d-block w-100" data-section="{{sectionid}}">
+    {{#activities}}
+    <li class="activity activity-wrapper {{modname}} modtype_{{modname}} hasinfo {{#indented}}indented{{/indented}}"
+        id="module-{{id}}" data-for="cmitem" data-id="{{id}}" data-indexed="{{indented}}">
+        <div class="activity-item focus-control my-1" data-activityname="{{{name}}}">
+            <div class="d-grid align-items-center rui--activity-notautomatic">
+                <div class="activity-basis d-flex align-items-center flex-wrap">
+                    <div class="d-flex flex-row align-items-center mr-auto">
+                        <a href="{{{url}}}"
+                            class="activity-icon activityiconcontainer smaller courseicon align-self-start position-relative">
+                            <img src="{{icon}}" alt="{{modname}} icon" class="activityicon" />
+                        </a>
+                        <div class="activity-name-area activity-instance d-flex flex-column mr-2">
+                            <div class="activitytitle media modtype_{{modname}} position-relative align-self-start">
+                                <div class="media-body align-self-center">
+                                    <div class="activityname">
+                                        <a href="{{{url}}}" class="aalink stretched-link">
+                                            <span class="instancename">{{{name}}}</span>
+                                            <span class="accesshide"> {{modname}}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rui-modavailability description"></div>
+            </div>
+        </div>
+    </li>
+    {{/activities}}
+</ul>
+{{/sections}}

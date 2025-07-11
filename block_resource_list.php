@@ -45,11 +45,6 @@ class block_resource_list extends block_list
             $activity_title_filters = array_map('strtolower', array_filter(array_map('trim', $this->config->activitytitlefilters)));
         }
 
-        // Checkbox specifici per quiz
-        $show_verification_quiz = !empty($this->config->showverificationquiz);
-        $show_self_assessment_quiz = !empty($this->config->showselfassessmentquiz);
-        $show_case_study_quiz = !empty($this->config->showcasestudyquiz);
-
         $group_sections = !empty($this->config->groupsections);
         $sections = $modinfo->get_section_info_all();
         $templatecontext = ['sections' => []];
@@ -118,8 +113,10 @@ class block_resource_list extends block_list
             ];
         }
 
-        if (!empty($templatecontext['sections'])) {
-            $this->content->items[] = $OUTPUT->render_from_template('block_resource_list/activity_list', $templatecontext);
+        if (!empty($this->config->groupsections)) {
+            $this->content->items[] = $OUTPUT->render_from_template('block_resource_list/activity_list_grouped', $templatecontext);
+        } else {
+            $this->content->items[] = $OUTPUT->render_from_template('block_resource_list/activity_items', $templatecontext);
         }
 
         return $this->content;

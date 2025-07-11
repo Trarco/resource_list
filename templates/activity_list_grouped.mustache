@@ -1,0 +1,14 @@
+{{#sections}}
+<details open class="course-section" id="course-section-{{sectionid}}">
+    <summary class="rui-course-header-btn d-flex align-items-start position-relative col pl-0 my-3">
+        <span class="sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
+            id="sectionid-{{sectionid}}-title" data-for="section_title" data-id="{{sectionid}}"
+            data-number="{{sectionid}}">
+            {{{sectionname}}}
+        </span>
+    </summary>
+
+    {{> block_resource_list/activity_items }}
+
+</details>
+{{/sections}}
