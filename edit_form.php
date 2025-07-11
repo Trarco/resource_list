@@ -94,7 +94,7 @@ class block_resource_list_edit_form extends block_edit_form
         // Inizializza i valori salvati (deve avvenire dopo `repeat_elements`)
         foreach ($filters as $i => $filter) {
             $mform->setDefault("config_activitytitlefilters[$i]", $filter);
-            $mform->addHelpButton("config_activitytitlefilters[$i]", 'activitytitlefilters_help', 'block_resource_list');
+            $mform->addHelpButton("config_activitytitlefilters[$i]", 'activitytitlefilters', 'block_resource_list');
         }
 
         $mform->addElement('advcheckbox', 'config_excludefiltermatches', get_string('excludefiltermatches', 'block_resource_list'));
