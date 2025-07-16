@@ -9,3 +9,11 @@
     margin-bottom: 15px;
     color: #525252;
 }
+
+.block_resource_list .rui-section{
+    margin: 0;
+}
+
+.block_resource_list .dropdown-menu{
+    top: 5em;
+}

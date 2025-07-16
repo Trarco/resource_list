@@ -1,8 +1,8 @@
-{{#sections}}
 <ul class="rui-section section img-text d-block w-100" data-section="{{sectionid}}">
     {{#activities}}
     <li class="activity activity-wrapper {{modname}} modtype_{{modname}} hasinfo {{#indented}}indented{{/indented}}"
-        id="module-{{id}}" data-for="cmitem" data-id="{{id}}" data-indexed="{{indented}}">
+        data-tags="{{#taglist}}{{rawname}},{{/taglist}}" id="module-{{id}}" data-for="cmitem" data-id="{{id}}"
+        data-indexed="{{indented}}">
         <div class="activity-item focus-control my-1" data-activityname="{{{name}}}">
             <div class="d-grid align-items-center rui--activity-notautomatic">
                 <div class="activity-basis d-flex align-items-center flex-wrap">
@@ -24,6 +24,15 @@
                             </div>
                         </div>
                     </div>
+                    {{#has_tags}}
+                    <div class="activity-tags mt-1">
+                        {{#taglist}}
+                        <span class="badge badge-secondary mr-1" target="_blank" rel="noopener">
+                            {{rawname}}
+                        </span>
+                        {{/taglist}}
+                    </div>
+                    {{/has_tags}}
                 </div>
                 <div class="rui-modavailability description"></div>
             </div>
@@ -31,4 +40,3 @@
     </li>
     {{/activities}}
 </ul>
-{{/sections}}

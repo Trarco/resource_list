@@ -56,6 +56,16 @@ class block_resource_list_edit_form extends block_edit_form
         $mform->addElement('advcheckbox', 'config_removeindentation', get_string('removeindentation', 'block_resource_list'));
         $mform->setDefault('config_removeindentation', 0); // Default: unchecked.
 
+        $mform->addElement('advcheckbox', 'config_enabletagfrontendfilter', get_string('enabletagfrontendfilter', 'block_resource_list'));
+        $mform->addHelpButton('config_enabletagfrontendfilter', 'enabletagfrontendfilter', 'block_resource_list');
+        $mform->setDefault('config_enabletagfrontendfilter', 1);
+
+        if (!get_config('core', 'usetags')) {
+            $mform->freeze('config_enabletagfrontendfilter');
+            $mform->addElement('static', 'tagsdisabledinfo', '', get_string('tagsnotenabled', 'block_resource_list'));
+        }
+
+
         // Recupera i filtri salvati dalla configurazione del blocco
         $filters = [];
         if (isset($this->block->config->activitytitlefilters) && is_array($this->block->config->activitytitlefilters)) {

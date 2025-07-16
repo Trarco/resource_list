@@ -11,7 +11,7 @@ class block_resource_list extends block_list
 
     function get_content()
     {
-        global $OUTPUT, $PAGE;
+        global $OUTPUT;
 
         if ($this->content !== null) {
             return $this->content;
@@ -20,26 +20,31 @@ class block_resource_list extends block_list
         $this->content = new stdClass;
         $this->content->items = [];
 
+        $tagsenabled = get_config('core', 'usetags');
+        $tagfrontendfilterenabled = $tagsenabled && (!isset($this->config->enabletagfrontendfilter) || $this->config->enabletagfrontendfilter);
 
-        $this->page->requires->css('/blocks/resource_list/style.css');
+        $this->page->requires->css('/blocks/resource_list/styles.css');
 
-        // Titolo personalizzato o di default
+        if ($tagfrontendfilterenabled && !defined('BLOCK_RESOURCE_LIST_JS_INCLUDED')) {
+            define('BLOCK_RESOURCE_LIST_JS_INCLUDED', true);
+            $this->page->requires->js_call_amd('block_resource_list/tag_filter', 'init');
+        }
+
         $this->title = !empty($this->config->title) ? $this->config->title : get_string('pluginname', 'block_resource_list');
 
-        // Descrizione opzionale
         if (!empty($this->config->description['text'])) {
             $description = format_text($this->config->description['text'], $this->config->description['format']);
             $this->content->items[] = html_writer::tag('div', $description, ['class' => 'block_resource_list_description']);
         }
 
+        $blockid = 'resource_block_' . $this->instance->id;
+
         $course = $this->page->course;
         $modinfo = get_fast_modinfo($course);
 
-        // Attività selezionate
         $selected_activity_types = !empty($this->config->activitytype) ? $this->config->activitytype : ['all'];
         $selected_activity_types = array_map('trim', $selected_activity_types);
 
-        // Opzioni di filtro per titolo
         $activity_title_filters = [];
         if (!empty($this->config->activitytitlefilters) && is_array($this->config->activitytitlefilters)) {
             $activity_title_filters = array_map('strtolower', array_filter(array_map('trim', $this->config->activitytitlefilters)));
@@ -47,6 +52,8 @@ class block_resource_list extends block_list
 
         $group_sections = !empty($this->config->groupsections);
         $sections = $modinfo->get_section_info_all();
+
+        $available_tags = [];
         $templatecontext = ['sections' => []];
 
         foreach ($sections as $sectionnum => $section) {
@@ -55,7 +62,6 @@ class block_resource_list extends block_list
                 continue;
             }
 
-            // Filtra le attività
             $filtered_cms = array_filter($cms_ids, function ($cmid) use ($modinfo, $selected_activity_types, $activity_title_filters) {
                 $cm = $modinfo->cms[$cmid];
                 $is_selected_type = in_array($cm->modname, $selected_activity_types) || in_array('all', $selected_activity_types);
@@ -67,7 +73,6 @@ class block_resource_list extends block_list
 
                 $exclude_matches = !empty($this->config->excludefiltermatches);
 
-                // Se non ci sono filtri, mostra tutto
                 if (empty($activity_title_filters)) {
                     return true;
                 }
@@ -75,12 +80,10 @@ class block_resource_list extends block_list
                 foreach ($activity_title_filters as $keyword) {
                     $found = strpos($activity_name, $keyword) !== false;
 
-                    // Se devo escludere, ritorno false se trovo una corrispondenza
                     if ($exclude_matches && $found) {
                         return false;
                     }
 
-                    // Se NON devo escludere, ritorno true alla prima corrispondenza
                     if (!$exclude_matches && $found) {
                         return true;
                     }
@@ -96,6 +99,29 @@ class block_resource_list extends block_list
             $activities = [];
             foreach ($filtered_cms as $cmid) {
                 $cm = $modinfo->cms[$cmid];
+
+                $tagobjects = [];
+                if ($tagsenabled) {
+                    $tagobjects = core_tag_tag::get_item_tags('core', 'course_modules', $cm->id);
+                }
+                $tags = [];
+
+                foreach ($tagobjects as $tag) {
+                    $tags[] = [
+                        'id' => $tag->id,
+                        'name' => $tag->name,
+                        'rawname' => $tag->rawname,
+                        'url' => core_tag_tag::make_url($tag->tagcollid, $tag->rawname)->out()
+                    ];
+
+                    $available_tags[$tag->rawname] = [
+                        'id' => $tag->id,
+                        'name' => $tag->name,
+                        'rawname' => $tag->rawname,
+                        'url' => core_tag_tag::make_url($tag->tagcollid, $tag->rawname)->out()
+                    ];
+                }
+
                 $activities[] = [
                     'id' => $cm->id,
                     'modname' => $cm->modname,
@@ -103,20 +129,27 @@ class block_resource_list extends block_list
                     'url' => $cm->url->out(),
                     'icon' => $cm->get_icon_url()->out(),
                     'indented' => $cm->indent > 0 && empty($this->config->removeindentation),
+                    'taglist' => $tags,
+                    'has_tags' => !empty($tags)
                 ];
             }
 
             $templatecontext['sections'][] = [
                 'sectionid' => $sectionnum,
                 'sectionname' => get_section_name($course, $section),
-                'activities' => $activities
+                'activities' => $activities,
+                'uniqid' => $blockid . '_section_' . $sectionnum
             ];
         }
+
+        $templatecontext['showtagfrontendfilter'] = $tagsenabled ? $tagfrontendfilterenabled : false;
+        $templatecontext['availabletags'] = $tagsenabled ? array_values($available_tags) : [];
+        $templatecontext['uniqid'] = $blockid;
 
         if (!empty($this->config->groupsections)) {
             $this->content->items[] = $OUTPUT->render_from_template('block_resource_list/activity_list_grouped', $templatecontext);
         } else {
-            $this->content->items[] = $OUTPUT->render_from_template('block_resource_list/activity_items', $templatecontext);
+            $this->content->items[] = $OUTPUT->render_from_template('block_resource_list/activity_list_flat', $templatecontext);
         }
 
         return $this->content;
