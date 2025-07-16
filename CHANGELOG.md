@@ -3,15 +3,15 @@
 ## [2.1.0] - 2025-07-16
 ### Added
 * **Frontend Tag Filter**: A dynamic UI filter (checkbox dropdown) has been added to allow users to filter activities by Moodle tags directly from the block interface.
-- * The filter is only displayed if:
-  - * The global Moodle setting for tags is enabled (usetags), and
-  - * The instance-level option "Enable frontend tag filter" is checked (default: enabled).
-  - * The dropdown displays all tags found in the block's activities and highlights selected ones.
-  - * Sections with no visible activities after filtering are automatically hidden.
+* The filter is only displayed if:
+  - The global Moodle setting for tags is enabled (usetags), and
+  - The instance-level option "Enable frontend tag filter" is checked (default: enabled).
+* The dropdown displays all tags found in the block's activities and highlights selected ones.
+* Sections with no visible activities after filtering are automatically hidden.
 
 ### Changed
-* - JS Scoping by Block Instance: Frontend filters now correctly isolate their scope per block instance (data-uniqid), preventing interference between multiple blocks on the same course page.
-* - Template Context Cleanup: Ensured that showtagfrontendfilter and availabletags are only passed to Mustache if tags are enabled site-wide and relevant for the block.
+* JS Scoping by Block Instance: Frontend filters now correctly isolate their scope per block instance (data-uniqid), preventing interference between multiple blocks on the same course page.
+* Template Context Cleanup: Ensured that showtagfrontendfilter and availabletags are only passed to Mustache if tags are enabled site-wide and relevant for the block.
 
 ## \[2.0.0] - 2025-07-11
 
