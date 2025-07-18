@@ -60,6 +60,11 @@ class block_resource_list_edit_form extends block_edit_form
         $mform->addHelpButton('config_enabletagfrontendfilter', 'enabletagfrontendfilter', 'block_resource_list');
         $mform->setDefault('config_enabletagfrontendfilter', 1);
 
+        $mform->addElement('advcheckbox', 'config_enabletypefrontendfilter', get_string('enabletypefrontendfilter', 'block_resource_list'));
+        $mform->addHelpButton('config_enabletypefrontendfilter', 'enabletypefrontendfilter', 'block_resource_list');
+        $mform->setDefault('config_enabletypefrontendfilter', 1);
+
+
         if (!get_config('core', 'usetags')) {
             $mform->freeze('config_enabletagfrontendfilter');
             $mform->addElement('static', 'tagsdisabledinfo', '', get_string('tagsnotenabled', 'block_resource_list'));

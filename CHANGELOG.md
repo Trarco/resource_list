@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.2.0] - 2025-07-18
+
+### Added
+* **Frontend Type Filter**: Introduced a second filter (dropdown with checkboxes) allowing users to filter activities by type (e.g., Quiz, Page, Video) directly from the block interface.
+* The filter is only shown if the block setting "Enable frontend type filter" is enabled (default: true).
+* Each block instance now provides an isolated list of available types based on the current visible activities.
+* The type filter logic is implemented in a separate AMD module (`type_filter.js`) for modularity.
+
+### Changed
+* **Dropdown UI**: Tag and type filters are now rendered side-by-side in two columns using `div.col` for improved usability on larger screens.
+* **Template Data**: `availabletypes` and `showtypefrontendfilter` are now passed to the Mustache context only if the relevant setting is enabled.
+* **Activity Visibility Logic**: Activities hidden from students are now completely excluded at the source — they are no longer passed to the renderer or shown in the block, regardless of filtering.
+
+### Fixed
+* **Visibility Check**: Fixed an issue where activities hidden to students (but visible to teachers/admins) were still shown in the block even when logged in as a student.
+* **Filter Isolation**: Ensured that both tag and type filters work independently per block instance by using unique `data-uniqid` identifiers throughout the DOM and JavaScript.
+
 ## [2.1.0] - 2025-07-16
 ### Added
 * **Frontend Tag Filter**: A dynamic UI filter (checkbox dropdown) has been added to allow users to filter activities by Moodle tags directly from the block interface.

@@ -23,11 +23,20 @@ class block_resource_list extends block_list
         $tagsenabled = get_config('core', 'usetags');
         $tagfrontendfilterenabled = $tagsenabled && (!isset($this->config->enabletagfrontendfilter) || $this->config->enabletagfrontendfilter);
 
+        $typefrontendfilterenabled = !isset($this->config->enabletypefrontendfilter) || $this->config->enabletypefrontendfilter;
+        $templatecontext['showtypefrontendfilter'] = $typefrontendfilterenabled;
+
+
         $this->page->requires->css('/blocks/resource_list/styles.css');
 
         if ($tagfrontendfilterenabled && !defined('BLOCK_RESOURCE_LIST_JS_INCLUDED')) {
             define('BLOCK_RESOURCE_LIST_JS_INCLUDED', true);
             $this->page->requires->js_call_amd('block_resource_list/tag_filter', 'init');
+        }
+
+        if (!defined('BLOCK_RESOURCE_LIST_TYPEFILTER_INCLUDED')) {
+            define('BLOCK_RESOURCE_LIST_TYPEFILTER_INCLUDED', true);
+            $this->page->requires->js_call_amd('block_resource_list/type_filter', 'init');
         }
 
         $this->title = !empty($this->config->title) ? $this->config->title : get_string('pluginname', 'block_resource_list');
@@ -54,6 +63,7 @@ class block_resource_list extends block_list
         $sections = $modinfo->get_section_info_all();
 
         $available_tags = [];
+        $available_types = [];
         $templatecontext = ['sections' => []];
 
         foreach ($sections as $sectionnum => $section) {
@@ -62,35 +72,40 @@ class block_resource_list extends block_list
                 continue;
             }
 
-            $filtered_cms = array_filter($cms_ids, function ($cmid) use ($modinfo, $selected_activity_types, $activity_title_filters) {
-                $cm = $modinfo->cms[$cmid];
-                $is_selected_type = in_array($cm->modname, $selected_activity_types) || in_array('all', $selected_activity_types);
-                $activity_name = strtolower($cm->get_formatted_name());
+            $filtered_cms = [];
 
-                if (!$cm->uservisible || !$cm->has_view() || !$cm->url || !$is_selected_type) {
-                    return false;
+            foreach ($cms_ids as $cmid) {
+                $cm = $modinfo->cms[$cmid];
+
+                if (!$cm->uservisible || !$cm->has_view() || !$cm->url) {
+                    continue;
                 }
 
+                $is_selected_type = in_array($cm->modname, $selected_activity_types) || in_array('all', $selected_activity_types);
+                if (!$is_selected_type) {
+                    continue;
+                }
+
+                $activity_name = strtolower($cm->get_formatted_name());
                 $exclude_matches = !empty($this->config->excludefiltermatches);
 
                 if (empty($activity_title_filters)) {
-                    return true;
+                    $filtered_cms[] = $cmid;
+                    continue;
                 }
 
+                $matched = false;
                 foreach ($activity_title_filters as $keyword) {
-                    $found = strpos($activity_name, $keyword) !== false;
-
-                    if ($exclude_matches && $found) {
-                        return false;
-                    }
-
-                    if (!$exclude_matches && $found) {
-                        return true;
+                    if (strpos($activity_name, $keyword) !== false) {
+                        $matched = true;
+                        break;
                     }
                 }
-                return $exclude_matches;
-            });
 
+                if (($matched && !$exclude_matches) || (!$matched && $exclude_matches)) {
+                    $filtered_cms[] = $cmid;
+                }
+            }
 
             if (empty($filtered_cms)) {
                 continue;
@@ -104,6 +119,7 @@ class block_resource_list extends block_list
                 if ($tagsenabled) {
                     $tagobjects = core_tag_tag::get_item_tags('core', 'course_modules', $cm->id);
                 }
+
                 $tags = [];
 
                 foreach ($tagobjects as $tag) {
@@ -119,6 +135,13 @@ class block_resource_list extends block_list
                         'name' => $tag->name,
                         'rawname' => $tag->rawname,
                         'url' => core_tag_tag::make_url($tag->tagcollid, $tag->rawname)->out()
+                    ];
+                }
+
+                if (!isset($available_types[$cm->modname])) {
+                    $available_types[$cm->modname] = [
+                        'modname' => $cm->modname,
+                        'displayname' => get_string('modulename', $cm->modname)
                     ];
                 }
 
@@ -144,6 +167,8 @@ class block_resource_list extends block_list
 
         $templatecontext['showtagfrontendfilter'] = $tagsenabled ? $tagfrontendfilterenabled : false;
         $templatecontext['availabletags'] = $tagsenabled ? array_values($available_tags) : [];
+        $templatecontext['availabletypes'] = array_values($available_types);
+        $templatecontext['showtypefrontendfilter'] = true;
         $templatecontext['uniqid'] = $blockid;
 
         if (!empty($this->config->groupsections)) {
