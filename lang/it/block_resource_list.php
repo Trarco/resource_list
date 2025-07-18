@@ -30,3 +30,4 @@ $string['showallresources'] = 'Mostra tutte le risorse';
 $string['filterbytype'] = 'Filtra per tipo di attività';
 $string['showalltypes'] = 'Tutte le tipologie';
 $string['typesselected'] = 'Tipologie selezionate';
+$string['noactivitiesmatch'] = 'Nessuna attività corrisponde ai filtri selezionati.';

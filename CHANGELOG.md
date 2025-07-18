@@ -1,4 +1,12 @@
 # Changelog
+## [2.2.1] - 2025-07-18
+
+### Added
+* **Combined Filtering Support (AND Logic)**: Users can now apply both *Tag* and *Activity Type* filters simultaneously. Activities are displayed only if they match **both** the selected tags and types.
+* **Localized Activity Type Labels**: The filter dropdown and button now show the translated display name of each activity type, matching the Moodle language.
+
+### Changed
+* **Filter Reset Behavior**: Resetting one filter (e.g., tags) no longer invalidates the other (e.g., type). This ensures consistent filtering behavior across both filters.
 
 ## [2.2.0] - 2025-07-18
 

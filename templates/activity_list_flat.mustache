@@ -1,4 +1,9 @@
-{{> block_resource_list/filter_section }}
-{{#sections}}
-{{> block_resource_list/activity_items }}
-{{/sections}}
+<div class="block" data-blockuniqid="{{uniqid}}">
+    {{> block_resource_list/filter_section }}
+    {{#sections}}
+    {{> block_resource_list/activity_items }}
+    {{/sections}}
+    <div class="no-activities-message alert alert-info mt-3" style="display: none;" data-uniqid="{{uniqid}}">
+        {{#str}}noactivitiesmatch, block_resource_list{{/str}}
+    </div>
+</div>

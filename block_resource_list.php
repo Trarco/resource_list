@@ -166,9 +166,9 @@ class block_resource_list extends block_list
         }
 
         $templatecontext['showtagfrontendfilter'] = $tagsenabled ? $tagfrontendfilterenabled : false;
+        $templatecontext['showtypefrontendfilter'] = $typefrontendfilterenabled ? $typefrontendfilterenabled : false;
         $templatecontext['availabletags'] = $tagsenabled ? array_values($available_tags) : [];
         $templatecontext['availabletypes'] = array_values($available_types);
-        $templatecontext['showtypefrontendfilter'] = true;
         $templatecontext['uniqid'] = $blockid;
 
         if (!empty($this->config->groupsections)) {
@@ -183,7 +183,7 @@ class block_resource_list extends block_list
     function applicable_formats()
     {
         return array(
-            'course-view' => true, // Mostra solo nelle pagine corso
+            'course-view' => true,
             'site' => false,
             'my' => false,
         );
@@ -204,6 +204,6 @@ class block_resource_list extends block_list
 
     public function instance_allow_multiple()
     {
-        return true; // Permetti più blocchi
+        return true;
     }
 }
