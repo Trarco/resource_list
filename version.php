@@ -1,7 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025071103; // Data in formato YYYYMMDDXX.
+$plugin->version   = 2025071800; // Data in formato YYYYMMDDXX.
 $plugin->requires  = 2021051700; // Richiede Moodle 4.0 o versioni successive.
 $plugin->component = 'block_resource_list'; // Nome del componente.
 $plugin->maturity  = MATURITY_STABLE; // Stabilità del plugin.
